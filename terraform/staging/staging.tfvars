@@ -1,0 +1,6 @@
+aws_region = "eu-west-2"
+s3_bucket = "doorfeed-staging-tfstate"
+ecr_repo_name = "doorfeed-staging"
+ecs_task_execution_role = "arn:aws:iam::123456789012:role/ecsTaskExecutionRoleStaging"
+ecr_repo_url = "123456789012.dkr.ecr.eu-west-2.amazonaws.com/doorfeed-staging"
+image_tag = "latest"
