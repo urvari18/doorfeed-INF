@@ -35,17 +35,12 @@ env:
   AWS_REGION: eu-west-2
 
 jobs:
-  terraform-dev:
-    name: Terraform Deploy - Dev
+ deploy-dev:
     runs-on: ubuntu-latest
+    environment: Dev
     steps:
       - name: Checkout Code
         uses: actions/checkout@v3
-
-      - name: Setup Terraform
-        uses: hashicorp/setup-terraform@v2
-        with:
-          terraform_version: 1.6.6
 
       - name: Configure AWS Credentials
         uses: aws-actions/configure-aws-credentials@v2
@@ -54,79 +49,109 @@ jobs:
           aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           aws-region: ${{ env.AWS_REGION }}
 
-      - name: Terraform Init - Dev
-        working-directory: terraform
-        run: terraform init
+      - name: Install Terraform
+        uses: hashicorp/setup-terraform@v2
+        with:
+          terraform_version: ${{ env.TF_VERSION }}
+
+      - name: Deploy to Dev
+        run: |
+          cd ../doorfeed-INF/terraform/
+          terraform init
+          terraform apply -auto-approve -var="env=dev" -var="image_tag=${{ env.IMAGE_TAG }}"
+  
+#   terraform-dev:
+#     name: Terraform Deploy - Dev
+#     runs-on: ubuntu-latest
+#     steps:
+#       - name: Checkout Code
+#         uses: actions/checkout@v3
+
+#       - name: Setup Terraform
+#         uses: hashicorp/setup-terraform@v2
+#         with:
+#           terraform_version: 1.6.6
+
+#       - name: Configure AWS Credentials
+#         uses: aws-actions/configure-aws-credentials@v2
+#         with:
+#           aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+#           aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+#           aws-region: ${{ env.AWS_REGION }}
+
+#       - name: Terraform Init - Dev
+#         working-directory: terraform
+#         run: terraform init
     
-      - name: Terraform Plan - Dev
-        working-directory: terraform
-        run: terraform plan 
+#       - name: Terraform Plan - Dev
+#         working-directory: terraform
+#         run: terraform plan 
         
-      - name: Terraform Apply - Dev
-        working-directory: terraform
-        run: terraform apply -auto-approve  
+#       - name: Terraform Apply - Dev
+#         working-directory: terraform
+#         run: terraform apply -auto-approve  
       
 
-  terraform-staging:
-    name: Terraform Deploy - Staging
-    runs-on: ubuntu-latest
-    needs: terraform-dev
-    steps:
-      - name: Checkout Code
-        uses: actions/checkout@v3
+#   terraform-staging:
+#     name: Terraform Deploy - Staging
+#     runs-on: ubuntu-latest
+#     needs: terraform-dev
+#     steps:
+#       - name: Checkout Code
+#         uses: actions/checkout@v3
 
-      - name: Setup Terraform
-        uses: hashicorp/setup-terraform@v2
-        with:
-          terraform_version: 1.6.6
+#       - name: Setup Terraform
+#         uses: hashicorp/setup-terraform@v2
+#         with:
+#           terraform_version: 1.6.6
 
-      - name: Configure AWS Credentials
-        uses: aws-actions/configure-aws-credentials@v2
-        with:
-          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
-          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-          aws-region: ${{ env.AWS_REGION }}
+#       - name: Configure AWS Credentials
+#         uses: aws-actions/configure-aws-credentials@v2
+#         with:
+#           aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+#           aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+#           aws-region: ${{ env.AWS_REGION }}
 
-      - name: Terraform Init - Staging
-        working-directory: terraform
-        run: terraform init
+#       - name: Terraform Init - Staging
+#         working-directory: terraform
+#         run: terraform init
 
-      - name: Terraform Plan - Staging
-        working-directory: terraform
-        run: terraform plan 
+#       - name: Terraform Plan - Staging
+#         working-directory: terraform
+#         run: terraform plan 
 
-      - name: Terraform Apply - Staging
-        working-directory: terraform
-        run: terraform apply -auto-approve -var-file=staging/staging.tfvars
+#       - name: Terraform Apply - Staging
+#         working-directory: terraform
+#         run: terraform apply -auto-approve -var-file=staging/staging.tfvars
 
-  terraform-prod:
-    name: Terraform Deploy - Prod
-    runs-on: ubuntu-latest
-    needs: terraform-staging
-    steps:
-      - name: Checkout Code
-        uses: actions/checkout@v3
+#   terraform-prod:
+#     name: Terraform Deploy - Prod
+#     runs-on: ubuntu-latest
+#     needs: terraform-staging
+#     steps:
+#       - name: Checkout Code
+#         uses: actions/checkout@v3
 
-      - name: Setup Terraform
-        uses: hashicorp/setup-terraform@v2
-        with:
-          terraform_version: 1.6.6
+#       - name: Setup Terraform
+#         uses: hashicorp/setup-terraform@v2
+#         with:
+#           terraform_version: 1.6.6
 
-      - name: Configure AWS Credentials
-        uses: aws-actions/configure-aws-credentials@v2
-        with:
-          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
-          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-          aws-region: ${{ env.AWS_REGION }}
+#       - name: Configure AWS Credentials
+#         uses: aws-actions/configure-aws-credentials@v2
+#         with:
+#           aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+#           aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+#           aws-region: ${{ env.AWS_REGION }}
 
-      - name: Terraform Init - Prod
-        working-directory: terraform
-        run: terraform init
+#       - name: Terraform Init - Prod
+#         working-directory: terraform
+#         run: terraform init
 
-      - name: Terraform Plan - Prod
-        working-directory: terraform
-        run: terraform plan -var-file=prod/prod.tfvars
+#       - name: Terraform Plan - Prod
+#         working-directory: terraform
+#         run: terraform plan -var-file=prod/prod.tfvars
 
-      - name: Terraform Apply - Prod
-        working-directory: terraform
-        run: terraform apply -auto-approve -var-file=prod/prod.tfvars
+#       - name: Terraform Apply - Prod
+#         working-directory: terraform
+#         run: terraform apply -auto-approve -var-file=prod/prod.tfvars
