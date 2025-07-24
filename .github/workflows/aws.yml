@@ -60,7 +60,7 @@ jobs:
 
       - name: Terraform Apply - Dev
         working-directory: terraform
-        run: terraform apply -auto-approve -var-file=dev
+        run: terraform apply -auto-approve -var-file=dev/dev.tfvars
 
   terraform-staging:
     name: Terraform Deploy - Staging
@@ -92,7 +92,7 @@ jobs:
 
       - name: Terraform Apply - Staging
         working-directory: terraform
-        run: terraform apply -auto-approve -var-file=staging
+        run: terraform apply -auto-approve -var-file=staging/staging.tfvars
 
   terraform-prod:
     name: Terraform Deploy - Prod
