@@ -37,7 +37,7 @@ env:
   AWS_REGION: 'eu-west-2'
 
 jobs:
-  terraform:
+  terraform-dev:
     name: Terraform Dev Deployment
     runs-on: ubuntu-latest
 
