@@ -62,7 +62,7 @@ jobs:
 
       - name: Terraform Plan - dev
         working-directory: terraform
-        run: terraform plan 
+        run: terraform plan -var-file=dev/dev.tfvars
 
       - name: Terraform Apply - dev
         working-directory: terraform
@@ -94,7 +94,7 @@ jobs:
   
         - name: Terraform Plan - Staging
           working-directory: terraform
-          run: terraform plan 
+          run: terraform plan -var-file=staging/staging.tfvars
   
         - name: Terraform Apply - Staging
           working-directory: terraform
