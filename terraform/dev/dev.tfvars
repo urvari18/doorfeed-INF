@@ -1,3 +1,4 @@
+env = "dev"
 aws_region = "eu-west-2"
 s3_bucket = "doorfeed-dev-tfstate"
 ecr_repo_name = "doorfeed-dev"
