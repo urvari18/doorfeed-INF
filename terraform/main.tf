@@ -47,15 +47,4 @@ resource "aws_ecs_task_definition" "app" {
   }])
 }
 
-resource "aws_ecs_service" "app" {
-  name            = "doorfeed-${var.env}-service"
-  cluster         = aws_ecs_cluster.this.id
-  task_definition = aws_ecs_task_definition.app.arn
-  desired_count   = 1
-  launch_type     = "FARGATE"
-  network_configuration {
-    subnets         = ["subnet-xxxxxxxx"] 
-    security_groups = ["sg-xxxxxxxx"]
-    assign_public_ip = true
-  }
 }
