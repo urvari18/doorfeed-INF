@@ -56,9 +56,10 @@ jobs:
 
       - name: Deploy to Dev
         run: |
-          cd ../doorfeed-INF/terraform/
+          cd ../doorfeed-INF/terraform/dev
           terraform init
-          terraform apply -auto-approve -var="env=dev" -var="image_tag=${{ env.IMAGE_TAG }}"
+          terraform plan
+          terraform apply -auto-approve -var="env=dev" -var-file=dev.tfvars -var="image_tag=${{ env.IMAGE_TAG }}"
   
 #   terraform-dev:
 #     name: Terraform Deploy - Dev
