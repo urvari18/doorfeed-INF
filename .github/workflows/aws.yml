@@ -28,44 +28,45 @@ name: Terraform CI/CD
 
 on:
   push:
-    branches:
-      - main
+    branches: [main]
+  pull_request:
+    branches: [main]
 
 env:
-  AWS_REGION: eu-west-2
+  TF_VERSION: '1.6.0'
+  AWS_REGION: 'eu-west-2'
 
 jobs:
-  terraform-dev:
-    name: Terraform Deploy - Dev
+  terraform:
+    name: Terraform Dev Deployment
     runs-on: ubuntu-latest
+
+    defaults:
+      run:
+        shell: bash
+        working-directory: terraform/dev
+
     steps:
-      - name: Checkout Code
-        uses: actions/checkout@v3
+      - name: Checkout code
+        uses: actions/checkout@v4
 
       - name: Setup Terraform
-        uses: hashicorp/setup-terraform@v2
+        uses: hashicorp/setup-terraform@v3
         with:
-          terraform_version: 1.6.6
+          terraform_version: ${{ env.TF_VERSION }}
 
-      - name: Configure AWS Credentials
-        uses: aws-actions/configure-aws-credentials@v2
-        with:
-          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
-          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-          aws-region: ${{ env.AWS_REGION }}
-
-      - name: Terraform Init - Dev
-        working-directory: terraform
+      - name: Terraform Init
         run: terraform init
-    
-      - name: Terraform Plan - Dev
-        working-directory: terraform
-        run: terraform plan 
-        
-      - name: Terraform Apply - Dev
-        working-directory: terraform
-        run: terraform apply -auto-approve -var-file=dev/dev.tfvars
-      
+
+      - name: Terraform Validate
+        run: terraform validate
+
+      - name: Terraform Plan
+        run: terraform plan -var-file=../dev.tfvars
+
+      - name: Terraform Apply
+        if: github.ref == 'refs/heads/main' && github.event_name == 'push'
+        run: terraform apply -auto-approve -var-file=../dev.tfvars
 
   terraform-staging:
     name: Terraform Deploy - Staging
