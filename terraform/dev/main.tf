@@ -48,6 +48,28 @@ resource "aws_ecs_task_definition" "app" {
 }
 
 
+resource "aws_ecs_service" "doorfeed_service" {
+  name            = "doorfeed-service"
+  cluster         = aws_ecs_cluster.doorfeed_cluster.id
+  task_definition = aws_ecs_task_definition.doorfeed_task.arn
+  launch_type     = "FARGATE"
+  desired_count   = 1
+
+  network_configuration {
+    subnets         = aws_subnet.subnet[*].id
+    security_groups = [aws_security_group.alb_sg.id]
+    assign_public_ip = true
+  }
+
+  load_balancer {
+    target_group_arn = aws_lb_target_group.tg.arn
+    container_name   = "doorfeed"
+    container_port   = 3000
+  }
+
+  depends_on = [aws_lb_listener.listener]
+}
+
 resource "aws_s3_bucket" "doorfeed_bucket" {
   bucket = "doorfeed-${var.env}-bucket-new"
   acl    = "private"
