@@ -47,4 +47,14 @@ resource "aws_ecs_task_definition" "app" {
   }])
 }
 
+
+resource "aws_s3_bucket" "doorfeed_bucket" {
+  bucket = "doorfeed-${var.env}-bucket-new"
+  acl    = "private"
+
+  tags = {
+    Name        = "doorfeed-${var.env}-bucket-new"
+    Environment = var.env
+  }
 }
+
