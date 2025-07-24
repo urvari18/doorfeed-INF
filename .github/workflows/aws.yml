@@ -57,10 +57,15 @@ jobs:
       - name: Terraform Init - Dev
         working-directory: terraform
         run: terraform init
-
+    
+      - name: Terraform Plan - Dev
+        working-directory: terraform
+        run: terraform plan 
+        
       - name: Terraform Apply - Dev
         working-directory: terraform
-        run: terraform apply -auto-approve -var-file=dev/dev.tfvars
+        run: terraform apply -auto-approve  
+      
 
   terraform-staging:
     name: Terraform Deploy - Staging
