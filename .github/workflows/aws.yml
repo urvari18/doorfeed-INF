@@ -58,13 +58,9 @@ jobs:
         working-directory: terraform
         run: terraform init
 
-      - name: Terraform Plan - Dev
-        working-directory: terraform
-        run: terraform plan -var-file=dev/dev.tfvars
-
       - name: Terraform Apply - Dev
         working-directory: terraform
-        run: terraform apply -auto-approve -var-file=dev/dev.tfvars
+        run: terraform apply -auto-approve -var-file=dev
 
   terraform-staging:
     name: Terraform Deploy - Staging
@@ -92,11 +88,11 @@ jobs:
 
       - name: Terraform Plan - Staging
         working-directory: terraform
-        run: terraform plan -var-file=staging/staging.tfvars
+        run: terraform plan 
 
       - name: Terraform Apply - Staging
         working-directory: terraform
-        run: terraform apply -auto-approve -var-file=staging/staging.tfvars
+        run: terraform apply -auto-approve -var-file=staging
 
   terraform-prod:
     name: Terraform Deploy - Prod
